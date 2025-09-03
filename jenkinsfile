@@ -1,6 +1,6 @@
 pipeline {
     agent {
-        label 'slave-agent'  // Remplacez par le label de votre agent slave
+        label 'salvee'  // Remplacez par le label de votre agent slave
     }
     
     environment {
