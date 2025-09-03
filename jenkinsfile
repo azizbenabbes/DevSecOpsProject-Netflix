@@ -1,25 +1,120 @@
-node {
-   def registryProjet='registry.gitlab.com/benabbes.mohamedaziz30/jenkinstest/netflixyass' //notre registry gitlab
-   def IMAGE="${registryProjet}:version-${env.BUILD_ID}"  //donner un tag pour l'image
-   def tmdbKey = "93f33e69782099576b43798ad8e18d29" // clé API TMDB
- // Tu peux remplacer par env.TMDB_V3_API_KEY si tu veux la lire depuis Jenkins
-
-   // resultat de image est registry.gitlab.com/benabbes.mohamedaziz30/jenkinstest/wartest:version-1
-    stage('Clone') {
-              git branch: 'main', url: 'https://github.com/sheshdhar3/Netflix-clone.git' // clone notre dépôt
+pipeline {
+    agent {
+        label 'slave-agent'  // Remplacez par le label de votre agent slave
     }
-    /*stage('Maven package'){
-            sh 'mvn package'  //compile le projet pour avoir un .war
-    }*/
-    def img = stage('Build') {
-            docker.build("$IMAGE", " --build-arg TMDB_V3_API_KEY=${tmdbKey} .")
-    }
-    // resultat aziz-1 et protoc 8081
     
-    stage('Push') {
-          docker.withRegistry('https://registry.gitlab.com', 'reg1') {
-              img.push 'latest'
-              img.push()
-          }
+    environment {
+        REGISTRY_PROJECT = 'registry.gitlab.com/benabbes.mohamedaziz30/jenkinstest/netflixyass'
+        IMAGE = "${REGISTRY_PROJECT}:version-${BUILD_ID}"
+        TMDB_KEY = "93f33e69782099576b43798ad8e18d29"
+    }
+    
+    stages {
+        stage('Clone') {
+            steps {
+                git branch: 'main', url: 'https://github.com/azizbenabbes/DevSecOpsProject-Netflix.git'
+            }
+        }
+        
+        stage('SonarQube Analysis') {
+            steps {
+                withSonarQubeEnv('sq1') {
+                    sh """
+                        sonar-scanner \
+                        -Dsonar.projectKey=netflix-clone \
+                        -Dsonar.projectName="Netflix Clone" \
+                        -Dsonar.sources=.
+                    """
+                }
+                
+                // Archiver le rapport
+                archiveArtifacts artifacts: 'trivy-report.json', allowEmptyArchive: true
+            }
+        }
+        
+       
+        
+        stage('Build') {
+            steps {
+                script {
+                    def img = docker.build("${IMAGE}", " --build-arg TMDB_V3_API_KEY=${TMDB_KEY} .")
+                    env.DOCKER_IMAGE = img.id
+                }
+            }
+        }
+        
+        stage('Trivy Security Scan') {
+            steps {
+                sh """
+                    echo "Scanning Docker image: ${IMAGE}"
+                    trivy image --format table --no-progress ${IMAGE}
+                    
+                    # Générer un rapport JSON
+                    trivy image --format json --output trivy-report.json ${IMAGE}
+                    
+                    # Vérifier les vulnérabilités critiques et élevées
+                    echo "Checking for HIGH and CRITICAL vulnerabilities..."
+                    trivy image --severity HIGH,CRITICAL --exit-code 1 ${IMAGE}
+                """
+                
+                // Archiver le rapport
+                archiveArtifacts artifacts: 'trivy-report.json', allowEmptyArchive: true
+            }
+        }
+        
+        stage('Push') {
+            steps {
+                script {
+                    docker.withRegistry('https://registry.gitlab.com', 'reg1') {
+                        def img = docker.image("${IMAGE}")
+                        img.push('latest')
+                        img.push()
+                    }
+                }
+            }
+        }
+        
+        stage('Update ArgoCD Deployment') {
+            steps {
+                withCredentials([usernamePassword(credentialsId: 'github-creds', usernameVariable: 'GIT_USERNAME', passwordVariable: 'GIT_TOKEN')]) {
+                    sh """
+                        # Configuration Git
+                        git config --global user.name "Jenkins-CI"
+                        git config --global user.email "jenkins@ci.local"
+                        
+                        # Clone du dépôt GitHub
+                        git clone https://${GIT_USERNAME}:${GIT_TOKEN}@github.com/azizbenabbes/DevSecOpsProject-Netflix.git argocd-repo
+                        cd argocd-repo
+                        
+                        # Remplacer N'IMPORTE QUEL tag par le nouveau numéro de build
+                        sed -i "s|registry.gitlab.com/benabbes.mohamedaziz30/jenkinstest/netflixyass:.*|registry.gitlab.com/benabbes.mohamedaziz30/jenkinstest/netflixyass:version-${BUILD_ID}|g" argocd/dep.yml
+                        
+                        # Vérifier le changement
+                        echo "Updated deployment file:"
+                        grep "image:" argocd/dep.yml
+                        
+                        # Commit et push des changements
+                        git add argocd/dep.yml
+                        git commit -m "Update image tag to version-${BUILD_ID} - Build #${BUILD_ID}"
+                        git push origin main
+                        
+                        echo "Successfully updated deployment file to version-${BUILD_ID}"
+                    """
+                }
+            }
+        }
+    }
+    
+    post {
+        always {
+            // Nettoyer les images Docker locales pour économiser l'espace
+            sh 'docker system prune -f'
+        }
+        success {
+            echo "Pipeline completed successfully! Image pushed: ${IMAGE}"
+        }
+        failure {
+            echo "Pipeline failed! Check the logs for details."
+        }
     }
 }
