@@ -1,0 +1,25 @@
+node {
+   def registryProjet='registry.gitlab.com/benabbes.mohamedaziz30/jenkinstest/netflixyass' //notre registry gitlab
+   def IMAGE="${registryProjet}:version-${env.BUILD_ID}"  //donner un tag pour l'image
+   def tmdbKey = "93f33e69782099576b43798ad8e18d29" // clé API TMDB
+ // Tu peux remplacer par env.TMDB_V3_API_KEY si tu veux la lire depuis Jenkins
+
+   // resultat de image est registry.gitlab.com/benabbes.mohamedaziz30/jenkinstest/wartest:version-1
+    stage('Clone') {
+              git branch: 'main', url: 'https://github.com/sheshdhar3/Netflix-clone.git' // clone notre dépôt
+    }
+    /*stage('Maven package'){
+            sh 'mvn package'  //compile le projet pour avoir un .war
+    }*/
+    def img = stage('Build') {
+            docker.build("$IMAGE", " --build-arg TMDB_V3_API_KEY=${tmdbKey} .")
+    }
+    // resultat aziz-1 et protoc 8081
+    
+    stage('Push') {
+          docker.withRegistry('https://registry.gitlab.com', 'reg1') {
+              img.push 'latest'
+              img.push()
+          }
+    }
+}
