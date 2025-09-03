@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: netflixyass
-        image: registry.gitlab.com/benabbes.mohamedaziz30/jenkinstest/netflixyass:latest
+        image: registry.gitlab.com/benabbes.mohamedaziz30/jenkinstest/netflixyass:version-21
         ports:
         - containerPort: 80
 
