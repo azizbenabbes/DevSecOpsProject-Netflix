@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: netflixaziz
-        image: registry.gitlab.com/benabbes.mohamedaziz30/jenkinstest/netflix-medazizbenabbes:latest
+        image: registry.gitlab.com/benabbes.mohamedaziz30/jenkinstest/netflix-medazizbenabbes:version-1
         ports:
         - containerPort: 80
 
