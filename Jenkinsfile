@@ -4,7 +4,7 @@ pipeline {
     }
     
     environment {
-        REGISTRY_PROJECT = 'registry.gitlab.com/benabbes.mohamedaziz30/jenkinstest/netflixyass'
+        REGISTRY_PROJECT = 'registry.gitlab.com/benabbes.mohamedaziz30/jenkinstest/netflix-medazizbenabbes'
         IMAGE = "${REGISTRY_PROJECT}:version-${BUILD_ID}"
         TMDB_KEY = "93f33e69782099576b43798ad8e18d29"
     }
@@ -18,7 +18,7 @@ pipeline {
         
         stage('SonarQube Analysis') {
             steps {
-                withSonarQubeEnv('sq1') {
+                withSonarQubeEnv('sq2') {
                     sh """
                         sonar-scanner \
                         -Dsonar.projectKey=netflix-clone \
@@ -87,7 +87,7 @@ pipeline {
                         cd argocd-repo
                         
                         # Remplacer N'IMPORTE QUEL tag par le nouveau numéro de build
-                        sed -i "s|registry.gitlab.com/benabbes.mohamedaziz30/jenkinstest/netflixyass:.*|registry.gitlab.com/benabbes.mohamedaziz30/jenkinstest/netflixyass:version-${BUILD_ID}|g" argocd/dep.yml
+                        sed -i "s|registry.gitlab.com/benabbes.mohamedaziz30/jenkinstest/netflix-medazizbenabbes:.*|registry.gitlab.com/benabbes.mohamedaziz30/jenkinstest/netflix-medazizbenabbes:version-${BUILD_ID}|g" argocd/dep.yml
                         
                         # Vérifier le changement
                         echo "Updated deployment file:"
