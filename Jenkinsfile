@@ -2,38 +2,36 @@ pipeline {
     agent {
         label 'salvee'  // Remplacez par le label de votre agent slave
     }
-    
+
     environment {
         REGISTRY_PROJECT = 'registry.gitlab.com/benabbes.mohamedaziz30/jenkinstest/netflix-medazizbenabbes'
         IMAGE = "${REGISTRY_PROJECT}:version-${BUILD_ID}"
         TMDB_KEY = "93f33e69782099576b43798ad8e18d29"
     }
-    
+
     stages {
         stage('Clone') {
             steps {
                 git branch: 'main', url: 'https://github.com/azizbenabbes/DevSecOpsProject-Netflix.git'
             }
         }
-        
+
         stage('SonarQube Analysis') {
             steps {
                 withSonarQubeEnv('sq2') {
-                    sh """
+                    sh '''
                         sonar-scanner \
                         -Dsonar.projectKey=netflix-clone \
                         -Dsonar.projectName="Netflix Clone" \
                         -Dsonar.sources=.
-                    """
+                    '''
                 }
-                
+
                 // Archiver le rapport
                 archiveArtifacts artifacts: 'trivy-report.json', allowEmptyArchive: true
             }
         }
-        
-       
-        
+
         stage('Build') {
             steps {
                 script {
@@ -42,26 +40,26 @@ pipeline {
                 }
             }
         }
-        
+
         stage('Trivy Security Scan') {
             steps {
-                sh """
+                sh '''
                     echo "Scanning Docker image: ${IMAGE}"
                     trivy image --format table --no-progress ${IMAGE}
-                    
+
                     # Générer un rapport JSON
                     trivy image --format json --output trivy-report.json ${IMAGE}
-                    
+
                     # Vérifier les vulnérabilités critiques et élevées
                     echo "Checking for HIGH and CRITICAL vulnerabilities..."
                     trivy image --severity HIGH,CRITICAL --exit-code 1 ${IMAGE}
-                """
-                
+                '''
+
                 // Archiver le rapport
                 archiveArtifacts artifacts: 'trivy-report.json', allowEmptyArchive: true
             }
         }
-        
+
         stage('Push') {
             steps {
                 script {
@@ -73,48 +71,51 @@ pipeline {
                 }
             }
         }
-        
+
         stage('Update ArgoCD Deployment') {
             steps {
                 withCredentials([usernamePassword(credentialsId: 'github-creds', usernameVariable: 'GIT_USERNAME', passwordVariable: 'GIT_TOKEN')]) {
-                    sh """
-                        # Configuration Git
+                    sh '''
+                        # Config Git
                         git config --global user.name "Jenkins-CI"
                         git config --global user.email "jenkins@ci.local"
-                        
-                        # Clone du dépôt GitHub
+
+                        # Nettoyer ancien clone
+                        rm -rf argocd-repo
+
+                        # Clone sécurisé
                         git clone https://${GIT_USERNAME}:${GIT_TOKEN}@github.com/azizbenabbes/DevSecOpsProject-Netflix.git argocd-repo
                         cd argocd-repo
-                        
-                        # Remplacer N'IMPORTE QUEL tag par le nouveau numéro de build
+
+                        # Mettre à jour le tag de l'image
                         sed -i "s|registry.gitlab.com/benabbes.mohamedaziz30/jenkinstest/netflix-medazizbenabbes:.*|registry.gitlab.com/benabbes.mohamedaziz30/jenkinstest/netflix-medazizbenabbes:version-${BUILD_ID}|g" argocd/dep.yml
-                        
-                        # Vérifier le changement
+
+                        # Vérifier changement
                         echo "Updated deployment file:"
                         grep "image:" argocd/dep.yml
-                        
-                        # Commit et push des changements
+
+                        # Commit & push
                         git add argocd/dep.yml
                         git commit -m "Update image tag to version-${BUILD_ID} - Build #${BUILD_ID}"
                         git push origin main
-                        
+
                         echo "Successfully updated deployment file to version-${BUILD_ID}"
-                    """
+                    '''
                 }
             }
         }
     }
-    
+
     post {
         always {
-            // Nettoyer les images Docker locales pour économiser l'espace
+            // Nettoyer images Docker locales
             sh 'docker system prune -f'
         }
         success {
-            echo "Pipeline completed successfully! Image pushed: ${IMAGE}"
+            echo "✅ Pipeline completed successfully! Image pushed: ${IMAGE}"
         }
         failure {
-            echo "Pipeline failed! Check the logs for details."
+            echo "❌ Pipeline failed! Check the logs for details."
         }
     }
 }
