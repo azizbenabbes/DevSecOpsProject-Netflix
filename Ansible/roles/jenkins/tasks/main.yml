@@ -1,0 +1,13 @@
+# ------------------------------
+# Installer Docker et Jenkins master
+# ------------------------------
+- name: Installer Jenkins master
+  import_tasks: jenkins.yml
+  when: "'jenkins_master' in group_names"
+
+# ------------------------------
+# Installer Jenkins slave
+# ------------------------------
+- name: Installer Jenkins slave
+  import_tasks: jenkins_slave.yml
+  when: "'jenkins_slave' in group_names"

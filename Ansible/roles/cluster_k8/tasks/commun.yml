@@ -1,0 +1,117 @@
+---
+# ------- Préparation du système pour Kubernetes --------
+
+- name: Désactiver le swap (exigence Kubeadm)
+  shell: swapoff -a
+
+- name: Désactiver le swap dans fstab
+  replace:
+    path: /etc/fstab
+    regexp: '^([^#].*?\sswap\s+sw\s+.*)$'
+    replace: '# \1'
+
+- name: Charger les modules noyau requis pour containerd
+  copy:
+    dest: /etc/modules-load.d/containerd.conf
+    content: |
+      overlay
+      br_netfilter
+
+- name: Appliquer les modules
+  shell: |
+    modprobe overlay
+    modprobe br_netfilter
+
+- name: Configurer les paramètres sysctl pour Kubernetes
+  copy:
+    dest: /etc/sysctl.d/99-kubernetes-cri.conf
+    content: |
+      net.bridge.bridge-nf-call-iptables  = 1
+      net.ipv4.ip_forward                 = 1
+      net.bridge.bridge-nf-call-ip6tables = 1
+
+- name: Appliquer sysctl
+  command: sysctl --system
+
+- name: Installer les dépendances
+  dnf:
+    name:
+      - curl
+      - gnupg2
+      - yum-utils
+      - device-mapper-persistent-data
+      - lvm2
+    state: present
+
+# ------- Installation de containerd --------
+- name: Ajouter dépôt Docker
+  command: dnf config-manager --add-repo=https://download.docker.com/linux/centos/docker-ce.repo
+  args:
+    creates: /etc/yum.repos.d/docker-ce.repo
+
+- name: Installer containerd
+  dnf:
+    name: containerd.io
+    state: present
+
+- name: Générer config containerd
+  shell: /usr/bin/containerd config default > /etc/containerd/config.toml
+
+- name: Activer SystemdCgroup
+  replace:
+    path: /etc/containerd/config.toml
+    regexp: 'SystemdCgroup = false'
+    replace: 'SystemdCgroup = true'
+
+- name: Redémarrer containerd
+  systemd:
+    name: containerd
+    state: restarted
+    enabled: yes
+
+# ------- Installer les plugins CNI --------
+- name: Créer le dossier des plugins CNI
+  file:
+    path: /opt/cni/bin
+    state: directory
+    mode: '0755'
+
+- name: Télécharger les plugins CNI
+  get_url:
+    url: https://github.com/containernetworking/plugins/releases/download/v1.1.1/cni-plugins-linux-amd64-v1.1.1.tgz
+    dest: /tmp/cni-plugins-linux-amd64-v1.1.1.tgz
+    mode: '0644'
+
+- name: Extraire les plugins CNI
+  unarchive:
+    src: /tmp/cni-plugins-linux-amd64-v1.1.1.tgz
+    dest: /opt/cni/bin
+    remote_src: yes
+
+# ------- Installation Kubernetes --------
+- name: Ajouter clé GPG Kubernetes
+  rpm_key:
+    key: https://pkgs.k8s.io/core:/stable:/v1.30/rpm/repodata/repomd.xml.key
+    state: present
+
+- name: Ajouter dépôt Kubernetes
+  yum_repository:
+    name: kubernetes
+    description: Kubernetes v1.30
+    baseurl: https://pkgs.k8s.io/core:/stable:/v1.30/rpm/
+    gpgcheck: yes
+    gpgkey: https://pkgs.k8s.io/core:/stable:/v1.30/rpm/repodata/repomd.xml.key
+    enabled: yes
+
+- name: Installer kubelet et kubeadm
+  dnf:
+    name:
+      - kubelet-1.30.*
+      - kubeadm-1.30.*
+    state: present
+
+- name: Activer kubelet
+  systemd:
+    name: kubelet
+    enabled: yes
+

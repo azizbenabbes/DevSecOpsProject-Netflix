@@ -1,0 +1,85 @@
+- name: Enlever le taint du master pour permettre aux pods de tourner
+  command: kubectl taint nodes masterk8 node-role.kubernetes.io/control-plane:NoSchedule-
+  ignore_errors: yes
+
+- name: Installer dépendances nécessaires (curl, tar)
+  package:
+    name:
+      - curl
+      - tar
+    state: present
+
+- name: Télécharger Helm
+  get_url:
+    url: "https://get.helm.sh/helm-v3.12.2-linux-amd64.tar.gz"
+    dest: /tmp/helm.tar.gz
+  register: helm_download
+  until: helm_download is succeeded
+  retries: 3
+  delay: 5
+
+- name: Décompresser Helm
+  unarchive:
+    src: /tmp/helm.tar.gz
+    dest: /tmp/helm
+    remote_src: yes
+    extra_opts: [--strip-components=1]
+
+- name: Déplacer Helm dans /usr/local/bin
+  copy:
+    src: /tmp/helm/helm
+    dest: /usr/local/bin/helm
+    remote_src: yes
+    mode: '0755'
+
+- name: Vérifier Helm installé
+  command: /usr/local/bin/helm version
+  register: helm_check
+
+- name: Ajouter repo Prometheus Community
+  command: /usr/local/bin/helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+  args:
+    creates: /root/.cache/helm/repository/prometheus-community-index.yaml
+
+- name: Mettre à jour les repos Helm
+  command: /usr/local/bin/helm repo update
+
+- name: Créer namespace monitoring
+  command: kubectl create namespace monitoring
+  ignore_errors: yes
+
+- name: Créer fichier values.yaml pour Prometheus + Grafana + scrape Jenkins VMs
+  copy:
+    dest: /tmp/prometheus-values.yaml
+    content: |
+      grafana:
+        adminPassword: "admin123"
+        service:
+          type: NodePort
+          nodePort: 32000
+
+      prometheus:
+        prometheusSpec:
+          additionalScrapeConfigs:
+            - job_name: 'jenkins_vms_tailscale'
+              static_configs:
+                - targets:
+                    - "100.*.*.* :9100"  # Jenkins Master
+                    - "100.*.*.* :9100"  # Jenkins Slave
+
+
+
+- name: Installer kube-prometheus-stack
+  command: >
+    /usr/local/bin/helm install prometheus prometheus-community/kube-prometheus-stack
+    --namespace monitoring
+    -f /tmp/prometheus-values.yaml
+
+- name: Obtenir mot de passe Grafana
+  shell: kubectl get secret --namespace monitoring prometheus-grafana -o jsonpath="{.data.admin-password}" | base64 --decode
+  register: grafana_pass
+  failed_when: false
+
+- name: Afficher mot de passe Grafana
+  debug:
+    msg: "Password Grafana: {{ grafana_pass.stdout | default('admin123') }}"

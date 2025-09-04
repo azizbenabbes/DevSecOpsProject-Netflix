@@ -1,0 +1,190 @@
+---
+# Tâches pour installer Docker et Jenkins sur une VM Ubuntu
+# -------- Installation Docker --------
+
+- name: Installer et activer UFW
+  shell: |
+    apt-get update
+    apt-get install -y ufw
+    ufw --force enable
+  ignore_errors: yes
+  
+- name: Installer les dépendances pour Docker sur Ubuntu
+  apt:
+    name:
+      - apt-transport-https
+      - ca-certificates
+      - curl
+      - gnupg
+      - lsb-release
+    state: present
+    update_cache: yes
+
+- name: Ajouter la clé GPG Docker
+  apt_key:
+    url: https://download.docker.com/linux/ubuntu/gpg
+    state: present
+
+- name: Ajouter le dépôt Docker
+  apt_repository:
+    repo: "deb [arch=amd64] https://download.docker.com/linux/ubuntu {{ ansible_distribution_release }} stable"
+    state: present
+
+- name: Installer Docker
+  apt:
+    name:
+      - docker-ce
+      - docker-ce-cli
+      - containerd.io
+    state: present
+    update_cache: yes
+
+- name: Activer et démarrer Docker
+  systemd:
+    name: docker
+    enabled: yes
+    state: started
+
+# -------- Installation Jenkins --------
+- name: Installer les dépendances Jenkins
+  apt:
+    name:
+      - openjdk-17-jdk 
+      - wget
+      - git
+      - curl
+    state: present
+
+- name: Ajouter la clé GPG Jenkins
+  apt_key:
+    url: "https://pkg.jenkins.io/debian-stable/jenkins.io-2023.key"
+    state: present
+
+- name: Ajouter le dépôt Jenkins
+  apt_repository:
+    repo: "deb https://pkg.jenkins.io/debian-stable binary/"
+    state: present
+
+- name: Installer Jenkins
+  apt:
+    name: jenkins
+    state: present
+    update_cache: yes
+
+- name: Activer et démarrer Jenkins
+  systemd:
+    name: jenkins
+    enabled: yes
+    state: started
+
+- name: Ouvrir le port 8080 dans le firewall
+  shell: |
+    ufw allow 8080/tcp
+  ignore_errors: yes
+
+- name: Obtenir le mot de passe initial Jenkins
+  shell: cat /var/lib/jenkins/secrets/initialAdminPassword
+  register: jenkins_initial_password
+  ignore_errors: yes
+
+- name: Afficher le mot de passe initial Jenkins
+  debug:
+    msg: "Mot de passe initial Jenkins: {{ jenkins_initial_password.stdout }}"
+
+# -------- Installation SonarQube --------
+- name: Créer utilisateur sonar
+  user:
+    name: sonar
+    system: yes
+    shell: /bin/bash
+    home: /opt/sonarqube
+    create_home: no
+
+- name: Télécharger SonarQube
+  get_url:
+    url: "https://binaries.sonarsource.com/Distribution/sonarqube/sonarqube-9.9.2.77730.zip"
+    dest: /tmp/sonarqube.zip
+
+- name: Installer unzip
+  apt:
+    name: unzip
+    state: present
+
+- name: Décompresser SonarQube
+  unarchive:
+    src: /tmp/sonarqube.zip
+    dest: /opt/
+    remote_src: yes
+    owner: sonar
+    group: sonar
+
+- name: Créer lien symbolique SonarQube
+  file:
+    src: /opt/sonarqube-9.9.2.77730
+    dest: /opt/sonarqube
+    state: link
+    owner: sonar
+    group: sonar
+
+- name: Créer fichier systemd pour SonarQube
+  copy:
+    dest: /etc/systemd/system/sonarqube.service
+    content: |
+      [Unit]
+      Description=SonarQube service
+      After=syslog.target network.target
+
+      [Service]
+      Type=forking
+      ExecStart=/opt/sonarqube/bin/linux-x86-64/sonar.sh start
+      ExecStop=/opt/sonarqube/bin/linux-x86-64/sonar.sh stop
+      User=sonar
+      Group=sonar
+      Restart=always
+      LimitNOFILE=65536
+      LimitNPROC=4096
+
+      [Install]
+      WantedBy=multi-user.target
+
+- name: Recharger systemd
+  systemd:
+    daemon_reload: yes
+
+- name: Démarrer et activer SonarQube
+  systemd:
+    name: sonarqube
+    enabled: yes
+    state: started
+
+- name: Ouvrir le port 9000 pour SonarQube
+  shell: |
+    ufw allow 9000/tcp
+  ignore_errors: yes
+
+# -------- Installation Trivy --------
+- name: Ajouter la clé GPG Trivy
+  apt_key:
+    url: https://aquasecurity.github.io/trivy-repo/deb/public.key
+    state: present
+
+- name: Ajouter le dépôt Trivy
+  apt_repository:
+    repo: "deb https://aquasecurity.github.io/trivy-repo/deb {{ ansible_distribution_release }} main"
+    state: present
+
+- name: Installer Trivy
+  apt:
+    name: trivy
+    state: present
+    update_cache: yes
+
+- name: Vérifier installation Trivy
+  command: trivy version
+  register: trivy_version
+
+- name: Afficher version Trivy
+  debug:
+    msg: "Trivy version: {{ trivy_version.stdout }}"
+
+
