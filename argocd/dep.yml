@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: netflixaziz
-        image: registry.gitlab.com/benabbes.mohamedaziz30/jenkinstest/netflix-medazizbenabbes:version-1
+        image: registry.gitlab.com/benabbes.mohamedaziz30/jenkinstest/netflix-medazizbenabbes:latest
         ports:
         - containerPort: 80
 
@@ -28,14 +28,12 @@ metadata:
   labels:
     app: netflixaziz
 spec:
-  type: NodePort
+  type: ClusterIP
   selector:
     app: netflixaziz
   ports:
   - port: 80
     targetPort: 80
-    nodePort: 30080
-
 
 ---
 apiVersion: networking.k8s.io/v1
