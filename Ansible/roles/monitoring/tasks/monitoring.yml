@@ -64,8 +64,8 @@
             - job_name: 'jenkins_vms_tailscale'
               static_configs:
                 - targets:
-                    - "100.*.*.* :9100"  # Jenkins Master
-                    - "100.*.*.* :9100"  # Jenkins Slave
+                    - "100.75.23.57:9100"  # Jenkins Master
+                    - "100.91.134.16:9100"  # Jenkins Slave
 
 
 

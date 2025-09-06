@@ -1,22 +1,22 @@
-- name: Création du cluster Kubernetes (1 master + 2 workers)
+- name: Déployer l'infra  
   hosts: all
   become: yes
   roles:
     - cluster_k8
-
-- name: Installation et configuration de Grafana & Prometheus pour le monitoring du cluster
+    
+- name: Deployer grafana et prometheus 
   hosts: all
   become: yes
   roles:
     - monitoring
-
-- name: Déploiement de ArgoCD dans le cluster Kubernetes
+    
+- name: Déployer argoCd dans le cluster k8
   hosts: all
   become: yes
   roles:
     - argoCd
-
-- name: Installation et configuration de Jenkins sur les machines virtuelles Azure
+    
+- name: Déployer Jenkins dans les vms azure  
   hosts: all
   become: yes
   roles:
