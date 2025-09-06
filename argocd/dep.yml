@@ -60,3 +60,59 @@ spec:
             name: netflixaziz-service
             port:
               number: 80
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: netflixaziz-deployment
+  labels:
+    app: netflixaziz
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: netflixaziz
+  template:
+    metadata:
+      labels:
+        app: netflixaziz
+    spec:
+      containers:
+      - name: netflixaziz
+        image: registry.gitlab.com/benabbes.mohamedaziz30/jenkinstest/netflix-medazizbenabbes:version-21
+        ports:
+        - containerPort: 80
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: netflixaziz-service
+  labels:
+    app: netflixaziz
+spec:
+  type: ClusterIP
+  selector:
+    app: netflixaziz
+  ports:
+  - port: 80
+    targetPort: 80
+
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: netflixaziz-ingress
+  annotations:
+    kubernetes.io/ingress.class: "nginx"
+spec:
+  rules:
+  - host: www.netflix-mohamed-aziz-benabbes.com
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: netflixaziz-service
+            port:
+              number: 80
