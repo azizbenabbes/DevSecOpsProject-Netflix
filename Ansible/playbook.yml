@@ -1,0 +1,23 @@
+- name: Déployer l'infra  
+  hosts: all
+  become: yes
+  roles:
+    - cluster_k8
+    
+- name: Deployer grafana et prometheus 
+  hosts: all
+  become: yes
+  roles:
+    - monitoring
+    
+- name: Déployer argoCd dans le cluster k8
+  hosts: all
+  become: yes
+  roles:
+    - argoCd
+    
+- name: Déployer Jenkins dans les vms azure  
+  hosts: all
+  become: yes
+  roles:
+    - jenkins

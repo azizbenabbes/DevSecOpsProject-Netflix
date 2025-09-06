@@ -1,0 +1,36 @@
+---
+# Tâches pour installer Node Exporter sur les VMs Azure
+
+- name: Télécharger Node Exporter
+  get_url:
+    url: "https://github.com/prometheus/node_exporter/releases/download/v1.7.0/node_exporter-1.7.0.linux-amd64.tar.gz"
+    dest: /tmp/node_exporter.tar.gz
+
+- name: Décompresser Node Exporter
+  unarchive:
+    src: /tmp/node_exporter.tar.gz
+    dest: /usr/local/bin/
+    remote_src: yes
+    extra_opts: [--strip-components=1]
+
+- name: Créer un service systemd pour Node Exporter
+  copy:
+    dest: /etc/systemd/system/node_exporter.service
+    content: |
+      [Unit]
+      Description=Node Exporter
+      After=network.target
+
+      [Service]
+      ExecStart=/usr/local/bin/node_exporter
+      Restart=always
+
+      [Install]
+      WantedBy=default.target
+
+- name: Activer et démarrer Node Exporter
+  systemd:
+    name: node_exporter
+    enabled: yes
+    state: started
+
