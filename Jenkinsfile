@@ -6,7 +6,7 @@ pipeline {
     environment {
         REGISTRY_PROJECT = 'registry.gitlab.com/benabbes.mohamedaziz30/jenkinstest/netflix-medazizbenabbes'
         IMAGE = "${REGISTRY_PROJECT}:version-${BUILD_ID}"
-        TMDB_KEY = "93f33e69782099576b43798ad8e18d29"
+        TMDB_KEY = "*****=>YOUR KEY TMDB"
     }
 
     stages {
