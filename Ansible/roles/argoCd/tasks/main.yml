@@ -1,8 +1,0 @@
-# ------------------------------
-# Installer ArgoCD sur le cluster Kubernetes
-# ------------------------------
-- name: Installer ArgoCD
-  import_tasks: argocd.yml
-  when: "'master' in group_names"
-
-

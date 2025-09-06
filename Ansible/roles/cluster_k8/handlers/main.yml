@@ -1,4 +1,0 @@
----
-# handlers file for kubernetes
-- name: Reload sysctl
-  command: sysctl --system
