@@ -170,4 +170,4 @@ admin_ssh_key {
   }
 
   depends_on = [azurerm_network_interface.nic_slave]
-}
+ }     
