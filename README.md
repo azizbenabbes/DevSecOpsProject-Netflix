@@ -301,6 +301,7 @@ Pipeline stages (`Jenkinsfile`):
 <img width="1368" height="567" alt="update dep yml jenkins" src="https://github.com/user-attachments/assets/a9344857-e0e1-474e-957d-ebfb628e516e" />
 
 
+<img width="1158" height="65" alt="update dep" src="https://github.com/user-attachments/assets/80fe274c-4ceb-4eec-a691-dd99e5ba4f5c" />
 
 7. **Pipeline Success** ✅  
 
