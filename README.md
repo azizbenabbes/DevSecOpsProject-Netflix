@@ -63,6 +63,9 @@ Created 4 VMs on **VMware (RHEL 9.6)**:
 
 <img width="204" height="201" alt="vmVmware" src="https://github.com/user-attachments/assets/ccdc6d9d-9f03-4297-922c-c780b1c92471" />
 
+
+
+
 ---
 
 ### 🔹 2. Jenkins Infrastructure (Azure) with Terraform + Vault
@@ -147,6 +150,8 @@ Azure :
 
 <img width="1881" height="807" alt="vmAzure" src="https://github.com/user-attachments/assets/4310b746-bdcb-4065-8bb5-63a05b3831e4" />
 
+
+
 ---
 
 ### 🔹 3. Secure Connectivity with Tailscale
@@ -157,8 +162,10 @@ Configured **Tailscale VPN** across all local and Azure VMs:
 - Enables secure monitoring between environments  
 
 
+<img width="1878" height="850" alt="tailscale vms1" src="https://github.com/user-attachments/assets/af250f24-064e-405d-9d97-85845ea8a473" />
 
-<img width="1876" height="801" alt="tailscale vms" src="https://github.com/user-attachments/assets/d21f24b3-708e-4f46-a85b-85b7b560aad7" />
+
+
 
 ---
 
@@ -190,6 +197,8 @@ ansible-playbook -i inventory.yml playbook.yml
 <img width="1445" height="399" alt="ansible fin" src="https://github.com/user-attachments/assets/9f42bf54-7f27-4c0d-a835-2db1e9ab7d41" />
 
 
+
+
 ---
 
 ### 🔹 5. Monitoring with Prometheus & Grafana
@@ -216,6 +225,8 @@ ansible-playbook -i inventory.yml playbook.yml
 
 
 <img width="1714" height="785" alt="network" src="https://github.com/user-attachments/assets/db7cb1c3-60aa-400a-8e13-fd80e2328187" />
+
+
 
 
 
@@ -296,6 +307,8 @@ Pipeline stages (`Jenkinsfile`):
 
 
 
+
+
 ---
 
 ### 🔹 7. GitOps Deployment with ArgoCD
@@ -327,6 +340,9 @@ ArgoCD :
 
 
 <img width="1718" height="922" alt="Argocfinal" src="https://github.com/user-attachments/assets/fa137123-7bbd-4b7c-8699-4a0ca9195b18" />
+
+
+
 
 ---
 
