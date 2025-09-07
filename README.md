@@ -61,7 +61,7 @@ Created 4 VMs on **VMware (RHEL 9.6)**:
 - **Master Node** → Kubernetes master  
 - **Worker1 & Worker2** → Kubernetes workers  
 
-📸 *Capture de la création des VMs*
+<img width="204" height="201" alt="vmVmware" src="https://github.com/user-attachments/assets/ccdc6d9d-9f03-4297-922c-c780b1c92471" />
 
 ---
 
