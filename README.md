@@ -30,7 +30,7 @@ A full-stack **DevSecOps implementation** showcasing how to build, secure, deplo
 
 📁 Project Tree Overview
 ```
-Netflix-DevSecOps
+DevSecOpsProject-Netflix
 ├── ansible
 │   ├── inventory.yml
 │   ├── playbook.yml
@@ -68,6 +68,25 @@ Created 4 VMs on **VMware (RHEL 9.6)**:
 ### 🔹 2. Jenkins Infrastructure (Azure) with Terraform + Vault
 
 Provisioned **Jenkins Master and Slave VMs** on Azure with Terraform, secured via Vault.
+I provisioned the following on Azure:
+
+Resource Group: rg-jenkins
+
+Virtual Network: vnet-jenkins (10.10.0.0/16)
+
+Subnets:
+
+Master subnet: 10.10.1.0/24
+
+Slave subnet: 10.10.2.0/24
+
+Network Security Groups for Jenkins VMs
+
+VMs (Ubuntu 22.04 LTS):
+
+Jenkins Master in master subnet (Standard_B2s)
+
+Jenkins Slave in slave subnet (Standard_B1s)
 
 📂 Terraform Files:
 - `main.tf` → Azure resources (RG, VNet, Subnet, NSG, VMs)  
@@ -76,13 +95,37 @@ Provisioned **Jenkins Master and Slave VMs** on Azure with Terraform, secured vi
 - `provider.tf` → Azure provider + Vault integration  
 
 🔐 **Vault** stores only:  
-- **SSH key** (private)  
+- **SSH key** (Public key)  
 - **Usernames & passwords** of Azure VMs  
 
 👉 The **SSH public key** was generated on the **DevOps VM (local)** to ensure that the DevOps machine can securely connect to Azure VMs.  
 
-📸 *Capture : Terraform plan & apply*  
-📸 *Capture : Vault secrets*
+Vault:
+
+<img width="1710" height="725" alt="lance vault" src="https://github.com/user-attachments/assets/9a3ba1c7-4f19-4362-9b5e-f347a998b851" />
+
+ <img width="1209" height="403" alt="lance vault 2" src="https://github.com/user-attachments/assets/e984a5c9-00f8-484d-a69c-d71f320b53d9" />
+ 
+<img width="1721" height="325" alt="entre les variable dans vault" src="https://github.com/user-attachments/assets/53163ffd-0e35-45ba-8619-2fbdab0fcf2e" />
+
+<img width="1707" height="855" alt="les secrets jenkins" src="https://github.com/user-attachments/assets/e0b1c398-896d-40e2-8b07-e3981f9aad89" />
+Terrafom plan:
+
+<img width="1544" height="803" alt="terraform plan 1" src="https://github.com/user-attachments/assets/a2e8334c-88fa-4937-8021-ef6bb05c0cb8" />
+
+<img width="658" height="230" alt="terraform plan 2" src="https://github.com/user-attachments/assets/525f168c-74ae-4041-9d29-6ec6bc1bea95" />
+
+Terraform Apply :
+<img width="1442" height="786" alt="terraform apply 1" src="https://github.com/user-attachments/assets/0ca2cad9-06fb-4aa4-84a3-b004fc4323d9" />
+
+<img width="1720" height="246" alt="terraform apply" src="https://github.com/user-attachments/assets/9f0b3868-c682-49ee-8e34-a0816baef986" />
+
+Azure :
+
+
+<img width="1883" height="874" alt="rgAzure" src="https://github.com/user-attachments/assets/22b642ff-6502-419f-92a8-45ca82bddc3b" />
+<img width="1881" height="807" alt="vmAzure" src="https://github.com/user-attachments/assets/be399ae5-8898-4eb3-b67b-2ca53ea735d2" />
+
 
 ---
 
