@@ -18,7 +18,7 @@ A full-stack **DevSecOps implementation** showcasing how to build, secure, deplo
 - Monitoring with **Prometheus + Grafana + Node Exporter**  
 - CI/CD pipelines with **Jenkins** (GitHub, SonarQube, Docker, Trivy, GitLab Registry)  
 - Application deployment via **NGINX Ingress + MetalLB**  
-- Final domain: 🌍 **www.netflix-mohamedaziz_benabbes.com**
+- Final domain: 🌍 **www.netflix-mohamed-aziz-benabbes.com**
 
 ---
 
