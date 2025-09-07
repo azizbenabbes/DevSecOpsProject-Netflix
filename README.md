@@ -229,6 +229,10 @@ ansible-playbook -i inventory.yml playbook.yml
 
 
 
+<img width="1724" height="704" alt="grafana jenkins 2" src="https://github.com/user-attachments/assets/0a2f0f98-1e71-4d95-98a7-bd4fc81cf7a6" />
+
+
+
 
 ---
 
@@ -236,6 +240,7 @@ ansible-playbook -i inventory.yml playbook.yml
 
 The pipeline was **executed on the Jenkins Slave** in Azure.  
 
+<img width="1704" height="545" alt="nodes sur jenkins" src="https://github.com/user-attachments/assets/c4d9c56a-9e51-48e6-bf99-79d773010c05" />
 
 
 <img width="1720" height="921" alt="jenkinsFile1" src="https://github.com/user-attachments/assets/9bda5203-93bc-4ff3-949b-0a75e2b7581e" />
