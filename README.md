@@ -45,9 +45,12 @@ DevSecOpsProject-Netflix
 │   ├── outputs.tf
 │   └── provider.tf
 ├── Jenkinsfile
+├── Dockerfile
+├── app
 ├── argocd
 │   └── dep.yml
 └── README.md
+
 ```
 
 ---
