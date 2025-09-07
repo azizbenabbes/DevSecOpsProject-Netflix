@@ -73,38 +73,29 @@ Created 4 VMs on **VMware (RHEL 9.6)**:
 
 ### 🔹 2. Jenkins Infrastructure (Azure) with Terraform + Vault
 
-Provisioned **Jenkins Master and Slave VMs** on Azure with Terraform, secured via Vault.
-I provisioned the following on Azure:
+Provisioned **Jenkins Master and Slave VMs** on Azure using **Terraform**, secured via **HashiCorp Vault**. The setup includes the following resources:
 
-Resource Group: rg-jenkins
+🏢 **Azure Resources:**  
+- **Resource Group:** `rg-jenkins`  
+- **Virtual Network:** `vnet-jenkins (10.10.0.0/16)`  
+- **Subnets:**  
+  - Master subnet: `10.10.1.0/24`  
+  - Slave subnet: `10.10.2.0/24`  
+- **Network Security Groups:** Configured for Jenkins VMs  
+- **VMs (Ubuntu 22.04 LTS):**  
+  - Jenkins Master → Master subnet (Standard_B2s)  
+  - Jenkins Slave → Slave subnet (Standard_B1s)  
 
-Virtual Network: vnet-jenkins (10.10.0.0/16)
-
-Subnets:
-
-Master subnet: 10.10.1.0/24
-
-Slave subnet: 10.10.2.0/24
-
-Network Security Groups for Jenkins VMs
-
-VMs (Ubuntu 22.04 LTS):
-
-Jenkins Master in master subnet (Standard_B2s)
-
-Jenkins Slave in slave subnet (Standard_B1s)
-
-📂 Terraform Files:
+📂 **Terraform Files:**  
 - `main.tf` → Azure resources (RG, VNet, Subnet, NSG, VMs)  
 - `variables.tf` → Configurable variables  
 - `outputs.tf` → Outputs (IPs, RG)  
 - `provider.tf` → Azure provider + Vault integration  
 
-🔐 **Vault** stores only:  
-- **SSH key** (Public key)  
-- **Usernames & passwords** of Azure VMs  
+🔐 **Vault Integration:**  
+- **Secrets stored:** SSH key (Public key), VM usernames & passwords  
+- The **SSH public key** was generated on the **local DevOps VM** to ensure secure and automated access to Azure VMs.  
 
-👉 The **SSH public key** was generated on the **DevOps VM (local)** to ensure that the DevOps machine can securely connect to Azure VMs.  
 
 Vault:
 
