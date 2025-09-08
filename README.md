@@ -24,7 +24,7 @@ A full-stack **DevSecOps implementation** showcasing how to build, secure, deplo
 
 📊 Project Architecture Diagram
 
-![diagraamsur-ezgif com-optimize](https://github.com/user-attachments/assets/d8038b17-3d57-4f1d-a129-b6123ff39e51)
+![diagraamsur](https://github.com/user-attachments/assets/9ccd26cb-f0f0-4593-90c1-a125e4001451)
 
 ---
 
