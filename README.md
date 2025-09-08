@@ -6,7 +6,7 @@ A full-stack **DevSecOps implementation** showcasing how to build, secure, deplo
 
 ## 🧠 What This Project Covers
 
-- Local VMs (RHEL 9.6) on **VMware**  
+- Local VMs (RHEL 9.6) on **VMware** (NAT) : 
   - 1x DevOps VM (Terraform + Ansible + Vault)  
   - 1x Kubernetes Master node  
   - 2x Kubernetes Worker nodes  
@@ -206,7 +206,7 @@ ansible-playbook -i inventory.yml playbook.yml
 
 
 
-<img width="1342" height="500" alt="granfan vm jenkins" src="https://github.com/user-attachments/assets/2afcbe48-8284-4e6b-8779-a665596953af" />
+<img width="1717" height="903" alt="master grafana 3" src="https://github.com/user-attachments/assets/55c7be61-2b7f-4387-bff7-f06f95575c35" />
 
 
 
@@ -359,15 +359,11 @@ Netflix Clone accessible at:
 
 
 ---
-🙏 Acknowledgements
 
-Thank you to everyone who took the time to visit my GitHub and read through this project 🚀.
-I am available for any questions or suggestions!
+## 🙏 Acknowledgements  
 
-## 🙏 Remerciements
-
-Merci à toutes les personnes qui ont pris le temps de visiter mon GitHub et de lire ce projet 🚀.  
-Je suis disponible pour toutes vos **questions** ou **suggestions** !  
+Thanks to everyone who took the time to visit my GitHub and read this project 🚀.  
+I’m available for any **questions** or **suggestions**!  
 
 👤 **Mohamed Aziz Ben Abbes**  
 📧 [benabbes.mohamedaziz30@gmail.com](mailto:benabbes.mohamedaziz30@gmail.com)  
