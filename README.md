@@ -211,7 +211,6 @@ ansible-playbook -i inventory.yml playbook.yml
 
 
 
-<img width="1719" height="784" alt="grafna 3" src="https://github.com/user-attachments/assets/959a5fa6-03b2-4377-9ad0-5760a16b1b18" />
 
 
 
