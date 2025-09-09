@@ -1,4 +1,4 @@
-# 🎬 Netflix Clone – DevSecOps Project
+![nchalahsur](https://github.com/user-attachments/assets/0422b9dc-a897-418b-b61b-fe51b60c6dc1)# 🎬 Netflix Clone – DevSecOps Project
 
 A full-stack **DevSecOps implementation** showcasing how to build, secure, deploy, and monitor a **Netflix clone** using cutting-edge tools like **Terraform, Ansible, Jenkins, ArgoCD, Vault, Tailscale, Prometheus, Grafana, Trivy, and SonarQube**.
 
@@ -23,10 +23,11 @@ A full-stack **DevSecOps implementation** showcasing how to build, secure, deplo
 ---
 
 📊 Project Architecture Diagram
+![nchalahsur](https://github.com/user-attachments/assets/eee70236-d3fd-4367-b88d-b815e8fbd51e)
 
-![diagraamsur](https://github.com/user-attachments/assets/5b7b4503-8df5-4917-a99f-10552b63dfe4)
 
 ---
+
 
 📁 Project Tree Overview
 ```
