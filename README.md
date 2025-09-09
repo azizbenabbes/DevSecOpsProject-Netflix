@@ -1,4 +1,4 @@
-![nchalahsur](https://github.com/user-attachments/assets/0422b9dc-a897-418b-b61b-fe51b60c6dc1)# 🎬 Netflix Clone – DevSecOps Project
+# 🎬 Netflix Clone – DevSecOps Project
 
 A full-stack **DevSecOps implementation** showcasing how to build, secure, deploy, and monitor a **Netflix clone** using cutting-edge tools like **Terraform, Ansible, Jenkins, ArgoCD, Vault, Tailscale, Prometheus, Grafana, Trivy, and SonarQube**.
 
