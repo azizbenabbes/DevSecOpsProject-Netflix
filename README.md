@@ -131,8 +131,8 @@ Terraform Apply :
 <img width="1442" height="786" alt="terraform apply 1" src="https://github.com/user-attachments/assets/0ca2cad9-06fb-4aa4-84a3-b004fc4323d9" />
 
 
+<img width="1720" height="246" alt="terraform apply" src="https://github.com/user-attachments/assets/f7cd9681-e19b-4ddd-90f6-c00edd407e17" />
 
-<img width="1720" height="246" alt="terraform apply" src="https://github.com/user-attachments/assets/9f0b3868-c682-49ee-8e34-a0816baef986" />
 
 
 
